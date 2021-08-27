@@ -1,34 +1,42 @@
 package org.perevall;
 
 import io.restassured.response.Response;
-import org.apache.http.HttpStatus;
-//import org.testng.Assert;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+import static afu.org.checkerframework.checker.units.UnitsTools.s;
 import static io.restassured.RestAssured.*;
 
 public class ApiTest {
+
     @Test()
     public static void checkGetUsers() throws Exception {
 
         Response response = given().relaxedHTTPSValidation().contentType("application/json")
                 .when()
-                .get("https://gorest.co.in/public/v1/users/33");
+                .get("https://gorest.co.in/public/v1/users/1987");
         Assert.assertEquals(response.getStatusCode(),200);
         //Assert.assertEquals(response.);
         System.out.print(response);
-
     }
-    @Test
+    @Test()
     public static void checkCreateUsers() throws Exception {
-        String body = "{\"name\":\"Tenali Ramakrishna\", \"gender\":\"male\", \"email\":\"t@15ce.com\", \"status\":\"active\"}";
-        Response response = given().relaxedHTTPSValidation().contentType("application/json").header("Authorization", "Bearer " + "41afda39c1b9f9862585a8ca759f5548a74b242ee50676cdec3b0c8cf26d6df0").body(body)
+        String email = ((int) (Math.random()* 10000)) + "@as.com";
+        System.out.print(email);
+        String body = "{\"name\":\"Don DigiDon\", \"gender\":\"male\", \"email\":\"asas@as.com\", \"status\":\"active\"}";
+        Response response = given().relaxedHTTPSValidation().contentType("application/json").header("Authorization", "Bearer " + "972514330f4f728bb6c3956cd01a060fd60f826cfca6adf4a0c4a6425d4e51ef").body(body)
                 .when()
                 .post("https://gorest.co.in/public/v1/users");
         String respons = response.asString();
         Assert.assertEquals(response.getStatusCode(),201);
+        System.out.print(respons);
+    }
+    @Test()
+    public static void checkDeleteUsers() throws Exception{
+        Response response = given().relaxedHTTPSValidation().contentType("application/json").header("Authorization", "Bearer " + "972514330f4f728bb6c3956cd01a060fd60f826cfca6adf4a0c4a6425d4e51ef")
+                .when()
+                .delete("https://gorest.co.in/public/v1/users/1987");
+        Assert.assertEquals(response.getStatusCode(),200);
+        System.out.print(response);
     }
 }
 
-    @Test
-    
