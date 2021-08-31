@@ -3,8 +3,9 @@ package org.perevall;
 import io.restassured.response.Response;
 import org.testng.Assert;
 import org.testng.annotations.Test;
+
 import java.util.*;
-import static afu.org.checkerframework.checker.units.UnitsTools.s;
+
 import static io.restassured.RestAssured.*;
 
 public class ApiTest {
@@ -28,11 +29,27 @@ public class ApiTest {
         Assert.assertEquals(response.getStatusCode(), 200);
         //Assert.assertEquals(response.);
         System.out.print(response);
-
     }
 
     @Test()
     public static void checkCreateUsers() throws Exception {
+        createUser();
+    }
+
+    @Test()
+    public static void checkDeleteUsers() throws Exception {
+        String id = createUser();
+        Response response = given().
+                relaxedHTTPSValidation().
+                contentType("application/json").
+                header("Authorization", "Bearer " + "972514330f4f728bb6c3956cd01a060fd60f826cfca6adf4a0c4a6425d4e51ef")
+                .when()
+                .delete("https://gorest.co.in/public/v1/users/" + id);
+        System.out.println("Пользователь с id: " + id + " был удалён.");
+        Assert.assertEquals(response.getStatusCode(), 204);
+    }
+
+    public static String createUser() {
         String email = getRandomNumber(5) + "@as.com";
         String body = "{\"name\":\"Don DigiDon\", \"gender\":\"male\", \"email\": \"" + email + "\", \"status\":\"active\"}";
         Response response = given().
@@ -44,33 +61,12 @@ public class ApiTest {
                 post("https://gorest.co.in/public/v1/users");
         String respons = response.asString();
         Assert.assertEquals(response.getStatusCode(), 201);
-        System.out.print(respons);
-        String id = (String) jsonObject.get("id");
-    }
-
-    @Test()
-    public static void checkDeleteUsers() throws Exception {
-        Response response = given().relaxedHTTPSValidation().contentType("application/json").header("Authorization",
-                        "Bearer " + "972514330f4f728bb6c3956cd01a060fd60f826cfca6adf4a0c4a6425d4e51ef")
-                .when()
-                .delete("https://gorest.co.in/public/v1/users/1587");
-        Assert.assertEquals(response.getStatusCode(), 200);
-        System.out.print(response);
-    }
-
-    public static String createUser(){
-        String email = getRandomNumber(5) + "@as.com";
-        String body = "{\"name\":\"Don DigiDon\", \"gender\":\"male\", \"email\": \"" + email + "\", \"status\":\"active\"}";
-        Response response = given().
-                relaxedHTTPSValidation().
-                contentType("application/json").
-                header("Authorization", "Bearer " + "972514330f4f728bb6c3956cd01a060fd60f826cfca6adf4a0c4a6425d4e51ef").
-                body(body).
-                when().
-                post("https://gorest.co.in/public/v1/users");
-        String respons = response.asString();
-        String id =
-        return id;
+        System.out.println(respons);
+        int indexId = respons.indexOf("id") + 4;
+        int indexName = respons.indexOf("name") - 2;
+        String id = respons.substring(indexId, indexName);
+        System.out.println(id);
+        return (id);
     }
 }
 
