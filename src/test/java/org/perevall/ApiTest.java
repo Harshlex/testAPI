@@ -19,20 +19,37 @@ public class ApiTest {
     }
 
     @Test()
-    public static void checkGetUsers() throws Exception {
+    public static void checkCreateUsers() throws Exception {
+        createUser();
+    }
 
+    @Test()
+    public static void checkGetUsers() throws Exception {
+        String id = createUser();
         Response response = given().
                 relaxedHTTPSValidation().
                 contentType("application/json").
                 when().
-                get("https://gorest.co.in/public/v1/users/1987");
+                get("https://gorest.co.in/public/v1/users/" + id);
         Assert.assertEquals(response.getStatusCode(), 200);
-        System.out.print(response);
+        String respons = response.asString();
+        System.out.print(respons);
     }
 
     @Test()
-    public static void checkCreateUsers() throws Exception {
-        createUser();
+    public static void checkUpdateUsers() throws Exception {
+        String id = createUser();
+        String body = "{\"name\":\"Alliasani Peddana\", \"email\": \"alliasani.peddana@15ce.com\", \"status\":\"active\"}";
+        Response response = given().
+                relaxedHTTPSValidation().
+                contentType("application/json").
+                header("Authorization", "Bearer " + "972514330f4f728bb6c3956cd01a060fd60f826cfca6adf4a0c4a6425d4e51ef").
+                body(body).
+                when().
+                patch("https://gorest.co.in/public/v1/users/" + id);
+        String respons = response.asString();
+        System.out.println(respons);
+        Assert.assertEquals(response.getStatusCode(), 200);
     }
 
     @Test()
@@ -41,9 +58,9 @@ public class ApiTest {
         Response response = given().
                 relaxedHTTPSValidation().
                 contentType("application/json").
-                header("Authorization", "Bearer " + "972514330f4f728bb6c3956cd01a060fd60f826cfca6adf4a0c4a6425d4e51ef")
-                .when()
-                .delete("https://gorest.co.in/public/v1/users/" + id);
+                header("Authorization", "Bearer " + "972514330f4f728bb6c3956cd01a060fd60f826cfca6adf4a0c4a6425d4e51ef").
+                when().
+                delete("https://gorest.co.in/public/v1/users/" + id);
         System.out.println("Пользователь с id: " + id + " был удалён.");
         Assert.assertEquals(response.getStatusCode(), 204);
     }
@@ -64,7 +81,6 @@ public class ApiTest {
         int indexId = respons.indexOf("id") + 4;
         int indexName = respons.indexOf("name") - 2;
         String id = respons.substring(indexId, indexName);
-        System.out.println(id);
         return (id);
     }
 }
